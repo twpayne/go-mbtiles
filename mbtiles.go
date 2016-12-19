@@ -11,12 +11,12 @@ import (
 
 var zxyRegexp = regexp.MustCompile(`\A([0-9]+)/([0-9]+)/([0-9]+)\z`)
 
-type tileServer struct {
+type TileServer struct {
 	db   *sql.DB
 	stmt *sql.Stmt
 }
 
-func NewTileServer(dsn string) (*tileServer, error) {
+func NewTileServer(dsn string) (*TileServer, error) {
 	db, err := sql.Open("sqlite3", dsn)
 	if err != nil {
 		return nil, err
@@ -26,10 +26,10 @@ func NewTileServer(dsn string) (*tileServer, error) {
 		db.Close()
 		return nil, err
 	}
-	return &tileServer{db, stmt}, nil
+	return &TileServer{db, stmt}, nil
 }
 
-func (t *tileServer) Close() error {
+func (t *TileServer) Close() error {
 	for _, err := range []error{
 		t.stmt.Close(),
 		t.db.Close(),
@@ -41,7 +41,7 @@ func (t *tileServer) Close() error {
 	return nil
 }
 
-func (t *tileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (t *TileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m := zxyRegexp.FindStringSubmatch(r.URL.Path)
 	if m == nil {
 		http.NotFound(w, r)
