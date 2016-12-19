@@ -1,3 +1,5 @@
+// Package mbtiles implements an HTTP handler for map tiles in MBTiles format.
+// See https://github.com/mapbox/mbtiles-spec.
 package mbtiles
 
 import (
@@ -11,11 +13,13 @@ import (
 
 var zxyRegexp = regexp.MustCompile(`\A([0-9]+)/([0-9]+)/([0-9]+)\z`)
 
+// A TileServer is an abstract tile server.
 type TileServer struct {
 	db   *sql.DB
 	stmt *sql.Stmt
 }
 
+// NewTileServer returns a new TileServer that serves tiles from dsn.
 func NewTileServer(dsn string) (*TileServer, error) {
 	db, err := sql.Open("sqlite3", dsn)
 	if err != nil {
@@ -29,6 +33,7 @@ func NewTileServer(dsn string) (*TileServer, error) {
 	return &TileServer{db, stmt}, nil
 }
 
+// Close releases all resources associated with t.
 func (t *TileServer) Close() error {
 	for _, err := range []error{
 		t.stmt.Close(),
@@ -41,6 +46,7 @@ func (t *TileServer) Close() error {
 	return nil
 }
 
+// ServeHTTP implements http.Handler.
 func (t *TileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m := zxyRegexp.FindStringSubmatch(r.URL.Path)
 	if m == nil {
