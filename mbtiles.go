@@ -2,10 +2,11 @@ package mbtiles
 
 import (
 	"database/sql"
-	_ "github.com/mattn/go-sqlite3"
 	"net/http"
 	"regexp"
 	"strconv"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var zxyRegexp = regexp.MustCompile(`\A([0-9]+)/([0-9]+)/([0-9]+)\z`)
