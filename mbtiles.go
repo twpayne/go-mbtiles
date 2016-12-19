@@ -29,9 +29,16 @@ func NewTileServer(dsn string) (*tileServer, error) {
 	return &tileServer{db, stmt}, nil
 }
 
-func (t *tileServer) Close() {
-	t.stmt.Close()
-	t.db.Close()
+func (t *tileServer) Close() error {
+	for _, err := range []error{
+		t.stmt.Close(),
+		t.db.Close(),
+	} {
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (t *tileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
