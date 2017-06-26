@@ -60,17 +60,17 @@ func (ms *mapServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func run() error {
 	flag.Parse()
-	mbt, err := mbtiles.New(*dsn)
+	mbtr, err := mbtiles.NewReader(*dsn)
 	if err != nil {
 		return err
 	}
-	defer mbt.Close()
+	defer mbtr.Close()
 	r := mux.NewRouter()
 	tilePrefix := "/" + filepath.Base(*dsn) + "/"
 	ms := &mapServer{
 		TilePrefix: tilePrefix,
 	}
-	r.PathPrefix(tilePrefix).Handler(http.StripPrefix(tilePrefix, mbt))
+	r.PathPrefix(tilePrefix).Handler(http.StripPrefix(tilePrefix, mbtr))
 	r.PathPrefix("/").Handler(http.StripPrefix("/", ms))
 	http.Handle("/", handlers.LoggingHandler(os.Stdout, r))
 	return http.ListenAndServe(*addr, nil)
