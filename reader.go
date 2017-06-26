@@ -1,5 +1,3 @@
-// Package mbtiles handles the MBTiles tileset format.
-// See https://github.com/mapbox/mbtiles-spec.
 package mbtiles
 
 import (
@@ -7,8 +5,6 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 var (
