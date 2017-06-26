@@ -1,12 +1,14 @@
-package mbtiles
+package mbtiles_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/twpayne/go-mbtiles"
 )
 
-func newWriter(t *testing.T, dsn string) *Writer {
-	w, err := NewWriter(dsn)
+func newWriter(t *testing.T, dsn string) *mbtiles.Writer {
+	w, err := mbtiles.NewWriter(dsn)
 	if err != nil {
 		t.Fatalf("NewWriter(%q) == %v, %v, want _, <nil>", dsn, w, err)
 	}
