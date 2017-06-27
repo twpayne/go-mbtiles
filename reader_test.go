@@ -44,7 +44,7 @@ func TestReaderSelectTile(t *testing.T) {
 		}
 		tileData, err := mbtr.SelectTile(tc.z, tc.x, tc.y)
 		if err != nil {
-			t.Errorf("mbtiles.NewReader(%q).SelectTile(%d, %d, %d) == %v, %v, want _, <nil>", tc.dsn, tc.z, tc.x, tc.y)
+			t.Errorf("mbtiles.NewReader(%q).SelectTile(%d, %d, %d) == %v, %v, want _, <nil>", tc.dsn, tc.z, tc.x, tc.y, tileData, err)
 			continue
 		}
 		if sha256sum := sha256.Sum256(tileData); sha256sum != tc.sha256sum {
