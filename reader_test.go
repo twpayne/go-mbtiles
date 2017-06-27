@@ -17,6 +17,14 @@ func hexDecodeSHA256Sum(t *testing.T, s string) (sha256sum [sha256.Size]byte) {
 	return
 }
 
+func newReader(t *testing.T, dsn string) *mbtiles.Reader {
+	r, err := mbtiles.NewReader(dsn)
+	if err != nil {
+		t.Fatalf("mbtiles.NewReader(%q) == %v, %v, want _, <nil>", dsn, r, err)
+	}
+	return r
+}
+
 func TestReader_SelectTile(t *testing.T) {
 	mbtrCache := make(map[string]*mbtiles.Reader)
 	for _, tc := range []struct {
@@ -34,12 +42,7 @@ func TestReader_SelectTile(t *testing.T) {
 	} {
 		mbtr, ok := mbtrCache[tc.dsn]
 		if !ok {
-			var err error
-			mbtr, err = mbtiles.NewReader(tc.dsn)
-			if err != nil {
-				t.Errorf("mbtiles.NewReader(%q) == %v, %v, want _, <nil>", tc.dsn, mbtr, err)
-				continue
-			}
+			mbtr = newReader(t, tc.dsn)
 			mbtrCache[tc.dsn] = mbtr
 		}
 		tileData, err := mbtr.SelectTile(tc.z, tc.x, tc.y)
