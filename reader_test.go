@@ -3,6 +3,9 @@ package mbtiles_test
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/twpayne/go-mbtiles"
@@ -58,5 +61,27 @@ func TestReader_SelectTile(t *testing.T) {
 		if err := mbtr.Close(); err != nil {
 			t.Errorf("mbtiles.NewReader(%q).Close() == %v, want <nil>", dsn, err)
 		}
+	}
+}
+
+func TestReader_ServeHTTP(t *testing.T) {
+	mbtr := newReader(t, "testdata/openstreetmap.org.mbtiles")
+	s := httptest.NewServer(http.StripPrefix("/", mbtr))
+	defer s.Close()
+	url := s.URL + "/0/0/0"
+	res, err := http.Get(url)
+	if err != nil {
+		t.Errorf("http.Get(%q) == %v, %v, want _, <nil>", url, res, err)
+	}
+	if got, want := res.StatusCode, http.StatusOK; got != want {
+		t.Errorf("res.StatusCode() == %d, want %d", got, want)
+	}
+	got, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		t.Errorf("ioutil.ReadAll(_) == %v, %v, want _, <nil>", got, err)
+	}
+	wantSHA256Sum := hexDecodeSHA256Sum(t, "075c660f81ba41146fda8610216a077b81bf5d8d102dbc893a57b7969e32ee88")
+	if gotSHA256Sum := sha256.Sum256(got); gotSHA256Sum != wantSHA256Sum {
+		t.Errorf("got SHA256 sum %s, want %v", gotSHA256Sum, wantSHA256Sum)
 	}
 }
