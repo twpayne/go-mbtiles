@@ -64,7 +64,11 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	defer mbtr.Close()
+	defer func() {
+		if err := mbtr.Close(); err != nil {
+			log.Print(err)
+		}
+	}()
 	r := mux.NewRouter()
 	tilePrefix := "/" + filepath.Base(*dsn) + "/"
 	ms := &mapServer{
