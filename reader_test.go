@@ -17,7 +17,7 @@ func hexDecodeSHA256Sum(t *testing.T, s string) (sha256sum [sha256.Size]byte) {
 	return
 }
 
-func TestReaderSelectTile(t *testing.T) {
+func TestReader_SelectTile(t *testing.T) {
 	mbtrCache := make(map[string]*mbtiles.Reader)
 	for _, tc := range []struct {
 		dsn       string
