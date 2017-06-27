@@ -71,5 +71,5 @@ func (r *Reader) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		http.NotFound(w, req)
 		return
 	}
-	w.Write(tileData)
+	_, _ = w.Write(tileData)
 }
