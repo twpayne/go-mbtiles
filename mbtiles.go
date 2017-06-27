@@ -3,5 +3,5 @@
 package mbtiles
 
 import (
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3" // Register sqlite3 database driver
 )
