@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/twpayne/go-mbtiles"
+	"github.com/flightaware/go-mbtiles"
 )
 
 func newWriter(t *testing.T, dsn string) *mbtiles.Writer {

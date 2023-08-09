@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/twpayne/go-mbtiles"
+	"github.com/flightaware/go-mbtiles"
 )
 
 func hexDecodeSHA256Sum(t *testing.T, s string) (sha256sum [sha256.Size]byte) {
