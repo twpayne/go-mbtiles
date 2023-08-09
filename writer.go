@@ -123,6 +123,15 @@ func (w *Writer) CreateMetadata() error {
 	return nil
 }
 
+// InsertMetadata inserts a name, value row to the metadata store
+func (w *Writer) InsertMetadata(name string, value string) error {
+	if err := w.CreateMetadata(); err != nil {
+		return err
+	}
+	_, err := w.db.Exec("INSERT OR REPLACE INTO metadata (name, value) VALUES (?, ?);", name, value)
+	return err
+}
+
 // DeleteMetadata removes the metadata table, useful for resetting the metadata in the mbtiles file
 func (w *Writer) DeleteMetadata() error {
 	if _, err := w.db.Exec(`
