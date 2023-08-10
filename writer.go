@@ -71,7 +71,7 @@ func (w *Writer) CreateTiles() error {
 			zoom_level INT NOT NULL,
 			tile_column INT NOT NULL,
 			tile_row INT NOT NULL,
-			tile_data BLOB NOT NULL
+			tile_data BLOB NOT NULL,
 			PRIMARY KEY (zoom_level, tile_column, tile_row)
 		);
 		CREATE UNIQUE INDEX IF NOT EXISTS tiles_index ON tiles (zoom_level, tile_column, tile_row);
