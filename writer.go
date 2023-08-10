@@ -15,6 +15,13 @@ type Writer struct {
 	tileInsertStmt *sql.Stmt
 }
 
+type TileData struct {
+	X    int
+	Y    int
+	Z    int
+	Data []byte
+}
+
 type Optimizations struct {
 	// Synchronous turns ON or OFF the statement PRAGMA synchronous = OFF
 	SynchronousOff bool
@@ -164,7 +171,7 @@ func (w *Writer) InsertTile(z, x, y int, tileData []byte) error {
 // BulkInsertTile inserts multiple tiles at the coordinates provided (z, x, y).
 // This can be faster because it reduces the number of transactions.
 // By default, sqlite wraps each insert in a transaction.
-func (w *Writer) BulkInsertTile(z, x, y []int, tileData [][]byte) error {
+func (w *Writer) BulkInsertTile(data []TileData) error {
 	if err := w.CreateTiles(); err != nil {
 		return err
 	}
@@ -180,8 +187,8 @@ func (w *Writer) BulkInsertTile(z, x, y []int, tileData [][]byte) error {
 		}
 	}
 	stmt := tx.Stmt(w.tileInsertStmt)
-	for i, _ := range z {
-		if _, err := stmt.Exec(z[i], x[i], y[i], tileData[i]); err != nil {
+	for _, d := range data {
+		if _, err := stmt.Exec(d.Z, d.X, d.Y, d.Data); err != nil {
 			tx.Rollback()
 			return err
 		}
