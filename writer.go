@@ -164,7 +164,7 @@ func (w *Writer) InsertTile(z, x, y int, tileData []byte) error {
 			return err
 		}
 	}
-	_, err := w.tileInsertStmt.Exec(z, x, y, tileData)
+	_, err := w.tileInsertStmt.Exec(z, x, 1<<uint(z)-y-1, tileData)
 	return err
 }
 
@@ -188,7 +188,7 @@ func (w *Writer) BulkInsertTile(data []TileData) error {
 	}
 	stmt := tx.Stmt(w.tileInsertStmt)
 	for _, d := range data {
-		if _, err := stmt.Exec(d.Z, d.X, d.Y, d.Data); err != nil {
+		if _, err := stmt.Exec(d.Z, d.X, 1<<uint(d.Z)-d.Y-1, d.Data); err != nil {
 			tx.Rollback()
 			return err
 		}
