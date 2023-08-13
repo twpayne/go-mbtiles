@@ -38,7 +38,7 @@ type Optimizations struct {
 //
 // See https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md#vector-tileset-metadata
 type MetadataJson struct {
-	VectorLayers []MetadataJsonVectorLayer `json:"vector_layers"`
+	VectorLayers []MetadataJsonVectorLayer `json:"vector_layers"` // Defines the vector layers in this mbtiles file. Required for vector tilesets (mvt/pbf). Not necessary for raster image (png/webp/jpg/etc) mbtiles files.
 }
 
 // MetadataJsonVectorLayer contains information about each vector tile layer in this mbtiles file.
