@@ -7,7 +7,7 @@ import (
 	"database/sql"
 )
 
-// A Writer writes a tileset.
+// A Writer writes a tileset. It should be created with NewWriter().
 type Writer struct {
 	Reader
 	hasTiles       bool
@@ -15,18 +15,39 @@ type Writer struct {
 	tileInsertStmt *sql.Stmt
 }
 
+// TileData represents a single tile for writing to the mbtiles file.
 type TileData struct {
-	X    int
-	Y    int
-	Z    int
-	Data []byte
+	X    int    // X coordinate in ZXY format
+	Y    int    // Y coordinate in ZXY format
+	Z    int    // Z coordinate in ZXY format
+	Data []byte // Tile data, must be gzip encoded for mbtiles
 }
 
+// Optimizations are options that can be turned on/off for writing mbtiles files,
+// however they do have side-effects so best to research before using them.
 type Optimizations struct {
 	// Synchronous turns ON or OFF the statement PRAGMA synchronous = OFF
 	SynchronousOff bool
 	// JournalModeMemory turns ON or OFF the statement PRAGMA journal_mode = MEMORY
 	JournalModeMemory bool
+}
+
+// MetadataJson is the metadata required by the mbtiles spec to be present for vector
+// tiles in the metadata table. This struct should be marshaled to a UTF-8 string
+// and the value stored with key name `json`.
+//
+// See https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md#vector-tileset-metadata
+type MetadataJson struct {
+	VectorLayers []MetadataJsonVectorLayer `json:"vector_layers"`
+}
+
+// MetadataJsonVectorLayer contains information about each vector tile layer in this mbtiles file.
+type MetadataJsonVectorLayer struct {
+	ID          string            `json:"id"`                    // The layer ID, which is referred to as the name of the layer in the Mapbox Vector Tile spec.
+	Description string            `json:"description,omitempty"` // A human-readable description of the layer's contents.
+	MinZoom     int               `json:"minzoom,omitempty"`     // The lowest zoom level whose tiles this layer appears in.
+	MaxZoom     int               `json:"maxzoom,omitempty"`     // The highest zoom level whose tiles this layer appears in.
+	Fields      map[string]string `json:"fields"`                // Fields has keys and values are the names and types of attributes available in this layer. Each type MUST be the string "Number", "Boolean", or "String". Attributes whose type varies between features SHOULD be listed as "String".
 }
 
 // NewWriter returns a new Writer.
