@@ -224,3 +224,11 @@ func (w *Writer) SelectTile(z, x, y int) ([]byte, error) {
 	}
 	return w.Reader.SelectTile(z, x, y)
 }
+
+// SelectMetadata returns the metadata value for 'name'
+func (w *Writer) SelectMetadata(name string) (string, error) {
+	if err := w.CreateMetadata(); err != nil {
+		return "", err
+	}
+	return w.Reader.SelectMetadata(name)
+}

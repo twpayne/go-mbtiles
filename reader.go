@@ -13,8 +13,9 @@ var (
 
 // A Reader reads a tileset.
 type Reader struct {
-	db             *sql.DB
-	tileSelectStmt *sql.Stmt
+	db                 *sql.DB
+	tileSelectStmt     *sql.Stmt
+	metadataSelectStmt *sql.Stmt
 }
 
 // NewReader returns a new Reader.
@@ -54,6 +55,20 @@ func (r *Reader) SelectTile(z, x, y int) ([]byte, error) {
 	var tileData []byte
 	err := r.tileSelectStmt.QueryRow(z, x, 1<<uint(z)-y-1).Scan(&tileData)
 	return tileData, err
+}
+
+// SelectMetadata returns the metadata value for 'name'
+func (r *Reader) SelectMetadata(name string) (string, error) {
+	if r.tileSelectStmt == nil {
+		var err error
+		r.metadataSelectStmt, err = r.db.Prepare("SELECT name, value FROM metadata WHERE name = ?;")
+		if err != nil {
+			return "", err
+		}
+	}
+	var value string
+	err := r.metadataSelectStmt.QueryRow(name).Scan(&value)
+	return value, err
 }
 
 // ServeHTTP implements http.Handler.
