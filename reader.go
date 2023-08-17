@@ -61,7 +61,7 @@ func (r *Reader) SelectTile(z, x, y int) ([]byte, error) {
 func (r *Reader) SelectMetadata(name string) (string, error) {
 	if r.tileSelectStmt == nil {
 		var err error
-		r.metadataSelectStmt, err = r.db.Prepare("SELECT name, value FROM metadata WHERE name = ?;")
+		r.metadataSelectStmt, err = r.db.Prepare("SELECT value FROM metadata WHERE name = ?;")
 		if err != nil {
 			return "", err
 		}
