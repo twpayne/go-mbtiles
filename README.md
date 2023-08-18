@@ -67,6 +67,10 @@ Of note:
   `InsertTile` or `BulkInsertTile`. The spec requires tiles to be compressed
   with gzip. How the caller implements the compression is outside the scope of
   this package.
+* For the `json` key in the metadata table, helper types are provided in this
+  package as `mbtiles.MetadataJson`. This type can be marshaled to a string
+  and inserted into the metadata table for spec compliance for vector MBTiles
+  files.
 * go-mbtiles will invert the Y coordinate to TMS to be compliant with the
   mbtiles spec.
 * go-mbtiles will create a metadata table if it doesn't exist, the first time
