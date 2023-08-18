@@ -1,4 +1,4 @@
-module github.com/flightaware/go-mbtiles
+module github.com/twpayne/go-mbtiles
 
 go 1.19
 
