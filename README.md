@@ -63,6 +63,10 @@ specification, instead it provides the tools to be compliant.
 Of note:
 * The caller is responsible for populating the correct metadata into the
   metadata persuant to the spec.
+* The caller is responsible for gzip'ing the tile data before calling
+  `InsertTile` or `BulkInsertTile`. The spec requires tiles to be compressed
+  with gzip. How the caller implements the compression is outside the scope of
+  this package.
 * go-mbtiles will invert the Y coordinate to TMS to be compliant with the
   mbtiles spec.
 * go-mbtiles will create a metadata table if it doesn't exist, the first time
