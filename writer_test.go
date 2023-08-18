@@ -1,10 +1,12 @@
 package mbtiles_test
 
 import (
+	"database/sql"
+	"errors"
 	"reflect"
 	"testing"
 
-	"github.com/flightaware/go-mbtiles"
+	"github.com/twpayne/go-mbtiles"
 )
 
 func newWriter(t *testing.T, dsn string) *mbtiles.Writer {
@@ -25,6 +27,16 @@ func TestWriter_CreateTiles(t *testing.T) {
 	}
 }
 
+func TestWriter_CreateMetadata(t *testing.T) {
+	w := newWriter(t, ":memory:")
+	if err := w.CreateMetadata(); err != nil {
+		t.Errorf("w.CreateMetadata() == %v, want <nil>", err)
+	}
+	if err := w.Close(); err != nil {
+		t.Fatalf("w.Close() == %v, want <nil>", err)
+	}
+}
+
 func TestWriter_InsertTile(t *testing.T) {
 	w := newWriter(t, ":memory:")
 	z, x, y, tileData := 0, 0, 0, []byte{0}
@@ -33,6 +45,27 @@ func TestWriter_InsertTile(t *testing.T) {
 	}
 	if gotTileData, err := w.SelectTile(z, x, y); err != nil || !reflect.DeepEqual(gotTileData, tileData) {
 		t.Errorf("w.SelectTile(%d, %d, %d) == %v, %v, want %v, <nil>", z, x, y, gotTileData, err, tileData)
+	}
+	if err := w.Close(); err != nil {
+		t.Fatalf("w.Close() == %v, want <nil>", err)
+	}
+}
+
+func TestWriter_InsertDeleteMetadata(t *testing.T) {
+	w := newWriter(t, ":memory:")
+	name := "name"
+	value := "foobarbaz"
+	if err := w.InsertMetadata(name, value); err != nil {
+		t.Errorf("w.InsertMetadata(%s, %s) == %v, want <nil>", name, value, err)
+	}
+	if dbValue, err := w.SelectMetadata(name); err != nil || value != dbValue {
+		t.Errorf("w.SelectMetadata(%s) == %s, %v, want %s, <nil>", name, dbValue, err, value)
+	}
+	if err := w.DeleteMetadata(); err != nil {
+		t.Errorf("w.DeleteMetadata() == %v, want <nil>", err)
+	}
+	if dbValue, err := w.SelectMetadata(name); err == nil || !errors.Is(err, sql.ErrNoRows) {
+		t.Errorf("w.SelectMetadata(%s) == %s, %v, want %s, %v", name, dbValue, err, "", sql.ErrNoRows)
 	}
 	if err := w.Close(); err != nil {
 		t.Fatalf("w.Close() == %v, want <nil>", err)
@@ -54,6 +87,35 @@ func TestWriter_ReplaceTile(t *testing.T) {
 	}
 	if gotTileData, err := w.SelectTile(z, x, y); err != nil || !reflect.DeepEqual(gotTileData, tileData2) {
 		t.Errorf("w.SelectTile(%d, %d, %d) == %v, %v, want %v, <nil>", z, x, y, gotTileData, err, tileData2)
+	}
+	if err := w.Close(); err != nil {
+		t.Fatalf("w.Close() == %v, want <nil>", err)
+	}
+}
+
+func TestWriter_BulkInsertTile(t *testing.T) {
+	w := newWriter(t, ":memory:")
+	tiles := []mbtiles.TileData{
+		{
+			Z:    0,
+			X:    0,
+			Y:    0,
+			Data: []byte{0},
+		},
+		{
+			Z:    6,
+			X:    1,
+			Y:    5,
+			Data: []byte{0, 1, 2, 3, 4, 5},
+		},
+	}
+	if err := w.BulkInsertTile(tiles); err != nil {
+		t.Errorf("w.InsertTile(%v) == %v, want <nil>", tiles, err)
+	}
+	for _, tile := range tiles {
+		if gotTileData, err := w.SelectTile(tile.Z, tile.X, tile.Y); err != nil || !reflect.DeepEqual(gotTileData, tile.Data) {
+			t.Errorf("w.SelectTile(%d, %d, %d) == %v, %v, want %v, <nil>", tile.Z, tile.X, tile.Y, gotTileData, err, tile)
+		}
 	}
 	if err := w.Close(); err != nil {
 		t.Fatalf("w.Close() == %v, want <nil>", err)

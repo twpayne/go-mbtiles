@@ -3,7 +3,7 @@ package mbtiles_test
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -64,6 +64,40 @@ func TestReader_SelectTile(t *testing.T) {
 	}
 }
 
+func TestReader_SelectMetadata(t *testing.T) {
+	mbtrCache := make(map[string]*mbtiles.Reader)
+	for _, tc := range []struct {
+		dsn   string
+		name  string
+		value string
+	}{
+		{
+			dsn:   "testdata/openstreetmap.org.mbtiles",
+			name:  "name",
+			value: "testdata",
+		},
+	} {
+		mbtr, ok := mbtrCache[tc.dsn]
+		if !ok {
+			mbtr = newReader(t, tc.dsn)
+			mbtrCache[tc.dsn] = mbtr
+		}
+		value, err := mbtr.SelectMetadata(tc.name)
+		if err != nil {
+			t.Errorf("mbtiles.NewReader(%q).SelectMetadata(%s) == %v, %v, want _, <nil>", tc.dsn, tc.name, tc.value, err)
+			continue
+		}
+		if value != tc.value {
+			t.Errorf("mbtiles.NewReader(%q).SelectMetadata(%s) = %v != %v", tc.dsn, tc.name, tc.value, value)
+		}
+	}
+	for dsn, mbtr := range mbtrCache {
+		if err := mbtr.Close(); err != nil {
+			t.Errorf("mbtiles.NewReader(%q).Close() == %v, want <nil>", dsn, err)
+		}
+	}
+}
+
 func TestReader_ServeHTTP(t *testing.T) {
 	mbtr := newReader(t, "testdata/openstreetmap.org.mbtiles")
 	s := httptest.NewServer(http.StripPrefix("/", mbtr))
@@ -76,7 +110,7 @@ func TestReader_ServeHTTP(t *testing.T) {
 	if got, want := res.StatusCode, http.StatusOK; got != want {
 		t.Errorf("res.StatusCode() == %d, want %d", got, want)
 	}
-	got, err := ioutil.ReadAll(res.Body)
+	got, err := io.ReadAll(res.Body)
 	if err != nil {
 		t.Errorf("ioutil.ReadAll(_) == %v, %v, want _, <nil>", got, err)
 	}
