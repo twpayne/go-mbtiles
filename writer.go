@@ -96,9 +96,7 @@ func (w *Writer) CreateTiles() error {
 // CreateTileIndex generates the standard index on the tiles table
 func (w *Writer) CreateTileIndex() error {
 	if _, err := w.db.Exec(`
-		BEGIN TRANSACTION;
 		CREATE UNIQUE INDEX IF NOT EXISTS tiles_index ON tiles (zoom_level, tile_column, tile_row);
-		COMMIT;
 	`); err != nil {
 		return err
 	}
@@ -108,9 +106,7 @@ func (w *Writer) CreateTileIndex() error {
 // DeleteTileIndex removes the tile index, useful for speeding up bulk inserts
 func (w *Writer) DeleteTileIndex() error {
 	if _, err := w.db.Exec(`
-		BEGIN TRANSACTION;
 		DROP INDEX IF EXISTS tiles_index;
-		COMMIT;
 	`); err != nil {
 		return err
 	}
@@ -123,9 +119,7 @@ func (w *Writer) CreateMetadata() error {
 		return nil
 	}
 	if _, err := w.db.Exec(`
-		BEGIN TRANSACTION;
 		CREATE TABLE IF NOT EXISTS metadata (name TEXT, value TEXT, PRIMARY KEY (name));
-		COMMIT;
 	`); err != nil {
 		return err
 	}
@@ -145,9 +139,7 @@ func (w *Writer) InsertMetadata(name string, value string) error {
 // DeleteMetadata removes the metadata table, useful for resetting the metadata in the mbtiles file
 func (w *Writer) DeleteMetadata() error {
 	if _, err := w.db.Exec(`
-		BEGIN TRANSACTION;
 		DELETE FROM metadata;
-		COMMIT;
 	`); err != nil {
 		return err
 	}
