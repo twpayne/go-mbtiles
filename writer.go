@@ -23,12 +23,13 @@ type TileData struct {
 	Data []byte // Tile data, must be gzip encoded for mbtiles
 }
 
-// Optimizations are options that can be turned on/off for writing mbtiles files,
-// however they do have side-effects so best to research before using them.
+// Optimizations are options that can be turned on/off for writing mbtiles
+// files, however they do have side-effects so best to research before using
+// them.
 type Optimizations struct {
-	// Synchronous turns ON or OFF the statement PRAGMA synchronous = OFF
+	// Synchronous turns ON or OFF the statement PRAGMA synchronous = OFF.
 	SynchronousOff bool
-	// JournalModeMemory turns ON or OFF the statement PRAGMA journal_mode = MEMORY
+	// JournalModeMemory turns ON or OFF the statement PRAGMA journal_mode = MEMORY.
 	JournalModeMemory bool
 }
 
@@ -55,7 +56,7 @@ func (w *Writer) Close() error {
 	return err
 }
 
-// SetOptimizations can be used to turn on or off Optimization options
+// SetOptimizations can be used to turn on or off Optimization options.
 func (w *Writer) SetOptimizations(opts Optimizations) error {
 	if opts.SynchronousOff {
 		if _, err := w.db.Exec("PRAGMA synchronous = OFF"); err != nil {
@@ -93,7 +94,7 @@ func (w *Writer) CreateTiles() error {
 	return nil
 }
 
-// CreateTileIndex generates the standard index on the tiles table
+// CreateTileIndex generates the standard index on the tiles table.
 func (w *Writer) CreateTileIndex() error {
 	if _, err := w.db.Exec(`
 		CREATE UNIQUE INDEX IF NOT EXISTS tiles_index ON tiles (zoom_level, tile_column, tile_row);
@@ -103,7 +104,7 @@ func (w *Writer) CreateTileIndex() error {
 	return nil
 }
 
-// DeleteTileIndex removes the tile index, useful for speeding up bulk inserts
+// DeleteTileIndex removes the tile index, useful for speeding up bulk inserts.
 func (w *Writer) DeleteTileIndex() error {
 	if _, err := w.db.Exec(`
 		DROP INDEX IF EXISTS tiles_index;
@@ -127,16 +128,19 @@ func (w *Writer) CreateMetadata() error {
 	return nil
 }
 
-// InsertMetadata inserts a name, value row to the metadata store
+// InsertMetadata inserts a name, value row to the metadata store.
 func (w *Writer) InsertMetadata(name string, value string) error {
 	if err := w.CreateMetadata(); err != nil {
 		return err
 	}
-	_, err := w.db.Exec("INSERT OR REPLACE INTO metadata (name, value) VALUES (?, ?);", name, value)
+	_, err := w.db.Exec(`
+		INSERT OR REPLACE INTO metadata (name, value) VALUES (?, ?);
+	`, name, value)
 	return err
 }
 
-// DeleteMetadata removes the metadata table, useful for resetting the metadata in the mbtiles file
+// DeleteMetadata removes the metadata table, useful for resetting the metadata
+// in the mbtiles file.
 func (w *Writer) DeleteMetadata() error {
 	if _, err := w.db.Exec(`
 		DELETE FROM metadata;
@@ -154,7 +158,9 @@ func (w *Writer) InsertTile(z, x, y int, tileData []byte) error {
 	}
 	if w.tileInsertStmt == nil {
 		var err error
-		w.tileInsertStmt, err = w.db.Prepare("INSERT OR REPLACE INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?);")
+		w.tileInsertStmt, err = w.db.Prepare(`
+			INSERT OR REPLACE INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?);
+		`)
 		if err != nil {
 			return err
 		}
@@ -176,7 +182,9 @@ func (w *Writer) BulkInsertTile(data []TileData) error {
 	}
 	if w.tileInsertStmt == nil {
 		var err error
-		w.tileInsertStmt, err = w.db.Prepare("INSERT OR REPLACE INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?);")
+		w.tileInsertStmt, err = w.db.Prepare(`
+			INSERT OR REPLACE INTO tiles (zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?);
+		`)
 		if err != nil {
 			return err
 		}
@@ -184,7 +192,7 @@ func (w *Writer) BulkInsertTile(data []TileData) error {
 	stmt := tx.Stmt(w.tileInsertStmt)
 	for _, d := range data {
 		if _, err := stmt.Exec(d.Z, d.X, 1<<uint(d.Z)-d.Y-1, d.Data); err != nil {
-			tx.Rollback()
+			_ = tx.Rollback()
 			return err
 		}
 	}
@@ -199,7 +207,7 @@ func (w *Writer) SelectTile(z, x, y int) ([]byte, error) {
 	return w.Reader.SelectTile(z, x, y)
 }
 
-// SelectMetadata returns the metadata value for 'name'
+// SelectMetadata returns the metadata value for name.
 func (w *Writer) SelectMetadata(name string) (string, error) {
 	if err := w.CreateMetadata(); err != nil {
 		return "", err
