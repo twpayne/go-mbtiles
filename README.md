@@ -1,10 +1,6 @@
 # go-mbtiles
 
-[![Build
-Status](https://travis-ci.org/twpayne/go-mbtiles.svg?branch=master)](https://travis-ci.org/twpayne/go-mbtiles)
-[![GoDoc](https://godoc.org/github.com/twpayne/go-mbtiles?status.svg)](https://godoc.org/github.com/twpayne/go-mbtiles)
-[![Report
-Card](https://goreportcard.com/badge/github.com/twpayne/go-mbtiles)](https://goreportcard.com/report/github.com/twpayne/go-mbtiles)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/twpayne/go-mbtiles)](https://pkg.go.dev/github.com/twpayne/go-mbtiles)
 
 Package `mbtiles` reads and writes files in the [MBTiles
 format](https://github.com/mapbox/mbtiles-spec).
@@ -12,8 +8,8 @@ format](https://github.com/mapbox/mbtiles-spec).
 ## Running the http server
 
 ```
-go install "github.com/twpayne/go-mbtiles/cmd/mbtiles-server"
-go run "github.com/twpayne/go-mbtiles/cmd/mbtiles-server" -addr localhost:9091 -dsn ./testdata/openstreetmap.org.mbtiles
+go install github.com/twpayne/go-mbtiles/cmd/mbtiles-server
+go run github.com/twpayne/go-mbtiles/cmd/mbtiles-server -addr localhost:9091 -dsn ./testdata/openstreetmap.org.mbtiles
 ```
 
 ## Reading mbtiles files
@@ -110,5 +106,6 @@ performance](https://stackoverflow.com/questions/1711631/improve-insert-per-seco
 BSD-2-Clause in [LICENCE](./LICENSE).
 
 ## Contributors
+
 * Tom Payne (@twpayne)
 * Joe Polastre (@polastre), FlightAware
