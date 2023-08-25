@@ -1,6 +1,6 @@
 # go-mbtiles
 
-[![GoDoc](https://godoc.org/github.com/twpayne/go-mbtiles?status.svg)](https://godoc.org/github.com/twpayne/go-mbtiles)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/twpayne/go-mbtiles)](https://pkg.go.dev/github.com/twpayne/go-mbtiles)
 [![Report
 Card](https://goreportcard.com/badge/github.com/twpayne/go-mbtiles)](https://goreportcard.com/report/github.com/twpayne/go-mbtiles)
 
