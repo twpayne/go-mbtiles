@@ -42,6 +42,17 @@ func NewWriter(dsn string) (*Writer, error) {
 	return &Writer{Reader: *r}, nil
 }
 
+// NewWriterWithDb returns a new Writer initialized with a sql.Database.
+// This is useful for instantiating alternative implementations of sqlite.
+func NewWriterWithDb(db *sql.DB) (*Reader, error) {
+	r, err := NewReaderWithDb(db)
+	if err != nil {
+		return nil, err
+	}
+	return &Writer{Reader: *r}, nil
+}
+
+
 // Close releases all resources with w.
 func (w *Writer) Close() error {
 	var err error
