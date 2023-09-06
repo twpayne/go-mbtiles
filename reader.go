@@ -24,6 +24,12 @@ func NewReader(dsn string) (*Reader, error) {
 	if err != nil {
 		return nil, err
 	}
+	return NewReaderWithDB(db)
+}
+
+// NewReaderWithDB returns a new Reader initialized with a sql.Database.
+// This is useful for instantiating alternative implementations of sqlite.
+func NewReaderWithDB(db *sql.DB) (*Reader, error) {
 	return &Reader{db: db}, nil
 }
 
