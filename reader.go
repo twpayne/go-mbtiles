@@ -19,8 +19,8 @@ type Reader struct {
 }
 
 // NewReader returns a new Reader.
-func NewReader(dsn string) (*Reader, error) {
-	db, err := sql.Open("sqlite3", dsn)
+func NewReader(driverName, dsn string) (*Reader, error) {
+	db, err := sql.Open(driverName, dsn)
 	if err != nil {
 		return nil, err
 	}

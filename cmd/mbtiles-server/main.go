@@ -10,6 +10,8 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	_ "modernc.org/sqlite" // Register sqlite database driver.
+
 	"github.com/twpayne/go-mbtiles"
 )
 
@@ -60,7 +62,7 @@ func (ms *mapServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func run() error {
 	flag.Parse()
-	mbtr, err := mbtiles.NewReader(*dsn)
+	mbtr, err := mbtiles.NewReader("sqlite", *dsn)
 	if err != nil {
 		return err
 	}

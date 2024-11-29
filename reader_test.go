@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert/v2"
+	_ "modernc.org/sqlite" // Register sqlite database driver.
 
 	"github.com/twpayne/go-mbtiles"
 )
@@ -21,7 +22,7 @@ func hexDecodeSHA256Sum(t *testing.T, s string) (sha256sum [sha256.Size]byte) {
 }
 
 func newReader(t *testing.T, dsn string) *mbtiles.Reader {
-	r, err := mbtiles.NewReader(dsn)
+	r, err := mbtiles.NewReader("sqlite", dsn)
 	assert.NoError(t, err)
 	return r
 }

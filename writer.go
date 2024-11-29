@@ -34,8 +34,8 @@ type Optimizations struct {
 }
 
 // NewWriter returns a new Writer.
-func NewWriter(dsn string) (*Writer, error) {
-	r, err := NewReader(dsn)
+func NewWriter(driverName, dsn string) (*Writer, error) {
+	r, err := NewReader(driverName, dsn)
 	if err != nil {
 		return nil, err
 	}

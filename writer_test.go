@@ -6,13 +6,14 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert/v2"
+	_ "modernc.org/sqlite" // Register sqlite database driver.
 
 	"github.com/twpayne/go-mbtiles"
 )
 
 func newWriter(t *testing.T) *mbtiles.Writer {
 	dsn := filepath.Join(t.TempDir(), "mbtiles.db")
-	w, err := mbtiles.NewWriter(dsn)
+	w, err := mbtiles.NewWriter("sqlite", dsn)
 	assert.NoError(t, err)
 	return w
 }
