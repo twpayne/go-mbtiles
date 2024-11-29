@@ -12,6 +12,7 @@ import (
 )
 
 func newWriter(t *testing.T) *mbtiles.Writer {
+	t.Helper()
 	dsn := filepath.Join(t.TempDir(), "mbtiles.db")
 	w, err := mbtiles.NewWriter("sqlite", dsn)
 	assert.NoError(t, err)

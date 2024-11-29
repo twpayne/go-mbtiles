@@ -7,9 +7,7 @@ import (
 	"strconv"
 )
 
-var (
-	zxyRegexp = regexp.MustCompile(`\A([0-9]+)/([0-9]+)/([0-9]+)\z`)
-)
+var zxyRegexp = regexp.MustCompile(`\A(\d+)/(\d+)/(\d+)\z`)
 
 // A Reader reads a tileset.
 type Reader struct {
@@ -63,7 +61,7 @@ func (r *Reader) SelectTile(z, x, y int) ([]byte, error) {
 	return tileData, err
 }
 
-// SelectMetadata returns the metadata value for 'name'
+// SelectMetadata returns the metadata value for name.
 func (r *Reader) SelectMetadata(name string) (string, error) {
 	if r.tileSelectStmt == nil {
 		var err error

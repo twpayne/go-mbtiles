@@ -15,6 +15,7 @@ import (
 )
 
 func hexDecodeSHA256Sum(t *testing.T, s string) (sha256sum [sha256.Size]byte) {
+	t.Helper()
 	slice, err := hex.DecodeString(s)
 	assert.NoError(t, err)
 	copy(sha256sum[:], slice)
@@ -22,6 +23,7 @@ func hexDecodeSHA256Sum(t *testing.T, s string) (sha256sum [sha256.Size]byte) {
 }
 
 func newReader(t *testing.T, dsn string) *mbtiles.Reader {
+	t.Helper()
 	r, err := mbtiles.NewReader("sqlite", dsn)
 	assert.NoError(t, err)
 	return r
@@ -90,6 +92,7 @@ func TestReader_ServeHTTP(t *testing.T) {
 	url := s.URL + "/0/0/0"
 	res, err := http.Get(url)
 	assert.NoError(t, err)
+	defer res.Body.Close()
 	assert.Equal(t, http.StatusOK, res.StatusCode)
 	got, err := io.ReadAll(res.Body)
 	assert.NoError(t, err)
