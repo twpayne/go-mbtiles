@@ -34,8 +34,8 @@ type Optimizations struct {
 }
 
 // NewWriter returns a new Writer.
-func NewWriter(dsn string) (*Writer, error) {
-	r, err := NewReader(dsn)
+func NewWriter(driverName, dsn string) (*Writer, error) {
+	r, err := NewReader(driverName, dsn)
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +139,7 @@ func (w *Writer) CreateMetadata() error {
 }
 
 // InsertMetadata inserts a name, value row to the metadata store.
-func (w *Writer) InsertMetadata(name string, value string) error {
+func (w *Writer) InsertMetadata(name, value string) error {
 	if err := w.CreateMetadata(); err != nil {
 		return err
 	}
@@ -200,6 +200,7 @@ func (w *Writer) BulkInsertTile(data []TileData) error {
 		}
 	}
 	stmt := tx.Stmt(w.tileInsertStmt)
+	defer stmt.Close()
 	for _, d := range data {
 		if _, err := stmt.Exec(d.Z, d.X, 1<<uint(d.Z)-d.Y-1, d.Data); err != nil {
 			_ = tx.Rollback()

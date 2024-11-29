@@ -10,15 +10,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
-    - uses: actions/setup-go@4d34df0c2316fe8122ab82dc22947d607c0c91f9
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+    - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed
     - run: go build ./...
     - run: go test ./...
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
-    - uses: actions/setup-go@4d34df0c2316fe8122ab82dc22947d607c0c91f9
-    - uses: golangci/golangci-lint-action@08e2f20817b15149a52b5b3ebe7de50aff2ba8c5
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+    - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed
+    - uses: golangci/golangci-lint-action@971e284b6050e8a5849b72094c50ab08da042db8
       with:
-        version: v1.54.2
+        version: v1.62.2

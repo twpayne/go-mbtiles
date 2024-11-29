@@ -10,11 +10,12 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	_ "modernc.org/sqlite" // Register sqlite database driver.
+
 	"github.com/twpayne/go-mbtiles"
 )
 
-var (
-	indexHTML = template.Must(template.New("index.html").Parse(`<html>
+var indexHTML = template.Must(template.New("index.html").Parse(`<html>
 	<head>
 		<title>mbtiles-server</title>
 		<link rel="stylesheet" href="https://openlayers.org/en/v4.2.0/css/ol.css" type="text/css">
@@ -41,7 +42,6 @@ var (
 	</body>
 </html>
 `))
-)
 
 var (
 	addr = flag.String("addr", "localhost:8080", "addr")
@@ -60,7 +60,7 @@ func (ms *mapServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func run() error {
 	flag.Parse()
-	mbtr, err := mbtiles.NewReader(*dsn)
+	mbtr, err := mbtiles.NewReader("sqlite", *dsn)
 	if err != nil {
 		return err
 	}

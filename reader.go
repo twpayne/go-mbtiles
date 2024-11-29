@@ -7,9 +7,7 @@ import (
 	"strconv"
 )
 
-var (
-	zxyRegexp = regexp.MustCompile(`\A([0-9]+)/([0-9]+)/([0-9]+)\z`)
-)
+var zxyRegexp = regexp.MustCompile(`\A(\d+)/(\d+)/(\d+)\z`)
 
 // A Reader reads a tileset.
 type Reader struct {
@@ -19,8 +17,8 @@ type Reader struct {
 }
 
 // NewReader returns a new Reader.
-func NewReader(dsn string) (*Reader, error) {
-	db, err := sql.Open("sqlite3", dsn)
+func NewReader(driverName, dsn string) (*Reader, error) {
+	db, err := sql.Open(driverName, dsn)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +61,7 @@ func (r *Reader) SelectTile(z, x, y int) ([]byte, error) {
 	return tileData, err
 }
 
-// SelectMetadata returns the metadata value for 'name'
+// SelectMetadata returns the metadata value for name.
 func (r *Reader) SelectMetadata(name string) (string, error) {
 	if r.tileSelectStmt == nil {
 		var err error

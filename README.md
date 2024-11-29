@@ -35,8 +35,8 @@ if err != nil {
 fmt.Printf("tile data: %+v\n", tile)
 ```
 
-Note that SQLite will happily open a non-existant file to read without
-throwing an error. It is recommend that you check for existance of the file
+Note that SQLite will happily open a non-existent file to read without
+throwing an error. It is recommend that you check for existence of the file
 first, if you're using a file path as your DSN. For example:
 
 ```golang
@@ -58,13 +58,13 @@ specification, instead it provides the tools to be compliant.
 
 Of note:
 * The caller is responsible for populating the correct metadata into the
-  metadata persuant to the spec.
+  metadata according to the spec.
 * The caller is responsible for gzip'ing the tile data before calling
   `InsertTile` or `BulkInsertTile`. The spec requires tiles to be compressed
   with gzip. How the caller implements the compression is outside the scope of
   this package.
 * For the `json` key in the metadata table, helper types are provided in this
-  package as `mbtiles.MetadataJson`. This type can be marshaled to a string
+  package as `mbtiles.MetadataJSON`. This type can be marshaled to a string
   and inserted into the metadata table for spec compliance for vector MBTiles
   files.
 * go-mbtiles will invert the Y coordinate to TMS to be compliant with the
@@ -77,7 +77,7 @@ Of note:
 
 ### Performance Tips
 
-MBTiles files are SQLite databases. To performantly bulk insert a large number
+MBTiles files are SQLite databases. To quickly bulk insert a large number
 of rows into the database, certain optimizations may be necessary to improve
 write performance.
 
@@ -89,8 +89,9 @@ inserts in a single transaction.
 
 There are other optimizations exposed through the `Writer` interface. You
 should understand their implications for your use case before turning them on.
-* `JournalModeMemory` switches journaling from disk to memory. In bulk import
-  scenarios, this is likely a very safe performance optimization to turn on.
+* `JournalModeMemory` switches the journal mode from disk to memory. In bulk
+  import scenarios, this is likely a very safe performance optimization to turn
+  on.
 * `SynchronousOff` allows SQLite to continue processing as soon as data is
   handed off to the operating system to be written (instead of wait for
   confirmation that the write was successful). This is likely safe for bulk
@@ -103,7 +104,7 @@ performance](https://stackoverflow.com/questions/1711631/improve-insert-per-seco
 
 ## License
 
-BSD-2-Clause in [LICENCE](./LICENSE).
+BSD-2-Clause in [LICENSE](./LICENSE).
 
 ## Contributors
 
