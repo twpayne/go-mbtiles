@@ -153,7 +153,7 @@ func (w *Writer) InsertMetadata(name, value string) error {
 // in the mbtiles file.
 func (w *Writer) DeleteMetadata() error {
 	if _, err := w.db.Exec(`
-		DELETE FROM metadata;
+		DROP TABLE IF EXISTS metadata;
 	`); err != nil {
 		return err
 	}
