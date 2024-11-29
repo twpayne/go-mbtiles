@@ -64,7 +64,7 @@ Of note:
   with gzip. How the caller implements the compression is outside the scope of
   this package.
 * For the `json` key in the metadata table, helper types are provided in this
-  package as `mbtiles.MetadataJson`. This type can be marshaled to a string
+  package as `mbtiles.MetadataJSON`. This type can be marshaled to a string
   and inserted into the metadata table for spec compliance for vector MBTiles
   files.
 * go-mbtiles will invert the Y coordinate to TMS to be compliant with the
